@@ -36,9 +36,6 @@ public class PersistentAccountDAO implements AccountDAO {
         while (res.moveToNext()){
             acc_numbers.add(res.getString(0));
         }
-
-        //TODO del
-        System.out.println(acc_numbers);
         return acc_numbers;
     }
 
@@ -58,14 +55,15 @@ public class PersistentAccountDAO implements AccountDAO {
             Account account = new Account(acc_no, bank_name, holder_name, balance);
             accounts.add(account);
         }
-
-        //TODO del
-        System.out.println("accs: " + accounts);
         return accounts;
     }
 
     @Override
     public Account getAccount(String accountNo) throws InvalidAccountException {
+        if(accountNo == null){
+            throw new InvalidAccountException("No account selected");
+        }
+
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] account_no = {accountNo};
 
@@ -84,49 +82,44 @@ public class PersistentAccountDAO implements AccountDAO {
 
         String msg = "Account " + accountNo + " is invalid.";
         throw new InvalidAccountException(msg);
-
-        //TODO properly handle the exception
     }
 
     @Override
     public void addAccount(Account account) {
-        //TODO check unique account number constraint
-        //TODO sanitize inputs using bind
-
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(ACCOUNTS_COLUMN_ACC_NO, account.getAccountNo());
-        contentValues.put(ACCOUNTS_COLUMN_BANK_NAME, account.getBankName());
-        contentValues.put(ACCOUNTS_COLUMN_ACC_HOLDER_NAME, account.getAccountHolderName());
-        contentValues.put(ACCOUNTS_COLUMN_BALANCE, account.getBalance());
-        db.insert(ACCOUNTS_TABLE_NAME, null, contentValues);
-
-        //TODO del
-        System.out.println("account added");
-        return;
+        if(account.getAccountNo() != null){
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(ACCOUNTS_COLUMN_ACC_NO, account.getAccountNo());
+            contentValues.put(ACCOUNTS_COLUMN_BANK_NAME, account.getBankName());
+            contentValues.put(ACCOUNTS_COLUMN_ACC_HOLDER_NAME, account.getAccountHolderName());
+            contentValues.put(ACCOUNTS_COLUMN_BALANCE, account.getBalance());
+            db.insert(ACCOUNTS_TABLE_NAME, null, contentValues);
+        }
     }
 
     @Override
     public void removeAccount(String accountNo) throws InvalidAccountException {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String[] account_no = {accountNo};
+        if (accountNo != null){
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            String[] account_no = {accountNo};
 
-        Cursor res = db.rawQuery("SELECT * FROM "+ ACCOUNTS_TABLE_NAME + " WHERE "+ ACCOUNTS_COLUMN_ACC_NO + " = ?", account_no);
+            Cursor res = db.rawQuery("SELECT * FROM "+ ACCOUNTS_TABLE_NAME + " WHERE "+ ACCOUNTS_COLUMN_ACC_NO + " = ?", account_no);
 
-        if (res.moveToFirst()){
-            db.delete("accounts", "account_number = ?", account_no);
-            return;
+            if (res.moveToFirst()){
+                db.delete("accounts", "account_number = ?", account_no);
+                return;
+            }
+
+            String msg = "Account " + accountNo + " is invalid.";
+            throw new InvalidAccountException(msg);
         }
-
-        String msg = "Account " + accountNo + " is invalid.";
-        throw new InvalidAccountException(msg);
-
-        //TODO properly handle the exception
+        throw new InvalidAccountException("account number cannot be empty");
     }
 
     @Override
     public void updateBalance(String accountNo, ExpenseType expenseType, double amount) throws InvalidAccountException {
-        //TODO make transtion
+
+        //negative account balances were allowed since the logging method anyway executes before this method
 
         Account account = getAccount(accountNo);
 

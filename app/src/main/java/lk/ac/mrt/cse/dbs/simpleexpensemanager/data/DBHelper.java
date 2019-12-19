@@ -60,8 +60,11 @@ public class DBHelper extends SQLiteOpenHelper {
         );
     }
 
-
-    public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //TODO drop tables
+        db.execSQL("DROP TABLE IF EXISTS " + ACCOUNTS_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TRANSACTIONS_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + EXPENSE_TYPES_TABLE_NAME);
+        onCreate(db);
     }
 }

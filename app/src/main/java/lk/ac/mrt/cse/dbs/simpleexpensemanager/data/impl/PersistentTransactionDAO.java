@@ -19,6 +19,7 @@ import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.TRANSACTIONS_
 import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.TRANSACTIONS_COLUMN_AMOUNT;
 import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.TRANSACTIONS_COLUMN_DATE;
 import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.TRANSACTIONS_COLUMN_EXPENSE_TYPE;
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.TRANSACTIONS_COLUMN_ID;
 import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.TRANSACTIONS_TABLE_NAME;
 
 public class PersistentTransactionDAO implements TransactionDAO {
@@ -30,41 +31,35 @@ public class PersistentTransactionDAO implements TransactionDAO {
 
     @Override
     public void logTransaction(Date date, String accountNo, ExpenseType expenseType, double amount) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(TRANSACTIONS_COLUMN_DATE, new SimpleDateFormat("dd-MM-yyyy").format(date));
-        contentValues.put(TRANSACTIONS_COLUMN_ACC_NO, accountNo);
-        contentValues.put(TRANSACTIONS_COLUMN_EXPENSE_TYPE, expenseType.toString());
-        contentValues.put(TRANSACTIONS_COLUMN_AMOUNT, amount);
-        db.insert(TRANSACTIONS_TABLE_NAME, null, contentValues);
+        if(accountNo != null){
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(TRANSACTIONS_COLUMN_DATE, new SimpleDateFormat("dd-MM-yyyy").format(date));
+            contentValues.put(TRANSACTIONS_COLUMN_ACC_NO, accountNo);
+            contentValues.put(TRANSACTIONS_COLUMN_EXPENSE_TYPE, expenseType.toString());
+            contentValues.put(TRANSACTIONS_COLUMN_AMOUNT, amount);
+            db.insert(TRANSACTIONS_TABLE_NAME, null, contentValues);
+        }
     }
 
     @Override
     public List<Transaction> getAllTransactionLogs() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE_NAME, null);
+        Cursor res = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE_NAME + " ORDER BY " + TRANSACTIONS_COLUMN_ID + " DESC", null);
 
         ArrayList<Transaction> transactions = new ArrayList<>();
 
         while (res.moveToNext()){
-            Date date;
             try {
-                date = new SimpleDateFormat("dd-MM-yyyy").parse(res.getString(1));
-            } catch (ParseException pe){
-                //TODO handle properly
-                date = new Date();
-                System.out.println(pe);
-            }
-            String acc_no = res.getString(2);
-            ExpenseType expense_type = null;
-            switch (res.getString(3)){
-                case "EXPENSE" :  expense_type = ExpenseType.EXPENSE;
-                case "INCOME" : expense_type = ExpenseType.INCOME;
-            }
-            Double amount = res.getDouble(4);
+                Date date = new SimpleDateFormat("dd-MM-yyyy").parse(res.getString(1));
+                String acc_no = res.getString(2);
+                ExpenseType expense_type = ExpenseType.valueOf(res.getString(3));
+                Double amount = res.getDouble(4);
 
-            Transaction transaction = new Transaction(date, acc_no, expense_type, amount);
-            transactions.add(transaction);
+                Transaction transaction = new Transaction(date, acc_no, expense_type, amount);
+                transactions.add(transaction);
+            } catch (ParseException ignored){
+            }
         }
 
         //TODO del
@@ -74,14 +69,24 @@ public class PersistentTransactionDAO implements TransactionDAO {
 
     @Override
     public List<Transaction> getPaginatedTransactionLogs(int limit) {
-        List<Transaction> transactions = getAllTransactionLogs();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + TRANSACTIONS_TABLE_NAME + " ORDER BY " + TRANSACTIONS_COLUMN_ID + " DESC LIMIT " + limit, null);
 
-        int size = transactions.size();
-        if (size <= limit) {
-            return transactions;
+        ArrayList<Transaction> transactions = new ArrayList<>();
+
+        while (res.moveToNext()){
+            try {
+                Date date = new SimpleDateFormat("dd-MM-yyyy").parse(res.getString(1));
+                String acc_no = res.getString(2);
+                ExpenseType expense_type = ExpenseType.valueOf(res.getString(3));
+                Double amount = res.getDouble(4);
+
+                Transaction transaction = new Transaction(date, acc_no, expense_type, amount);
+                transactions.add(transaction);
+            } catch (ParseException ignored){
+            }
         }
-        // return the last <code>limit</code> number of transaction logs
-        return transactions.subList(size - limit, size);
+        return transactions;
     }
 }
 
