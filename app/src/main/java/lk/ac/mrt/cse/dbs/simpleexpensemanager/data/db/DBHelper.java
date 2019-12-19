@@ -1,4 +1,4 @@
-package lk.ac.mrt.cse.dbs.simpleexpensemanager.data;
+package lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

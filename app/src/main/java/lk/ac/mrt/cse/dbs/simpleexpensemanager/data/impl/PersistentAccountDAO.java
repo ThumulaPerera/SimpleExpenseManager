@@ -11,13 +11,13 @@ import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.AccountDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.exception.InvalidAccountException;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Account;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.ExpenseType;
-import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper;
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper;
 
-import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.ACCOUNTS_COLUMN_ACC_HOLDER_NAME;
-import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.ACCOUNTS_COLUMN_ACC_NO;
-import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.ACCOUNTS_COLUMN_BALANCE;
-import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.ACCOUNTS_COLUMN_BANK_NAME;
-import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.ACCOUNTS_TABLE_NAME;
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper.ACCOUNTS_COLUMN_ACC_HOLDER_NAME;
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper.ACCOUNTS_COLUMN_ACC_NO;
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper.ACCOUNTS_COLUMN_BALANCE;
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper.ACCOUNTS_COLUMN_BANK_NAME;
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper.ACCOUNTS_TABLE_NAME;
 
 public class PersistentAccountDAO implements AccountDAO {
     private DBHelper dbHelper;

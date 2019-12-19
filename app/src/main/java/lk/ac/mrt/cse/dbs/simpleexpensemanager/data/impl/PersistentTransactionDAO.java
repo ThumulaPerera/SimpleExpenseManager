@@ -10,17 +10,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper;
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.TransactionDAO;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.ExpenseType;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Transaction;
 
-import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.TRANSACTIONS_COLUMN_ACC_NO;
-import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.TRANSACTIONS_COLUMN_AMOUNT;
-import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.TRANSACTIONS_COLUMN_DATE;
-import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.TRANSACTIONS_COLUMN_EXPENSE_TYPE;
-import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.TRANSACTIONS_COLUMN_ID;
-import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.DBHelper.TRANSACTIONS_TABLE_NAME;
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper.TRANSACTIONS_COLUMN_ACC_NO;
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper.TRANSACTIONS_COLUMN_AMOUNT;
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper.TRANSACTIONS_COLUMN_DATE;
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper.TRANSACTIONS_COLUMN_EXPENSE_TYPE;
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper.TRANSACTIONS_COLUMN_ID;
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.db.DBHelper.TRANSACTIONS_TABLE_NAME;
 
 public class PersistentTransactionDAO implements TransactionDAO {
     private DBHelper dbHelper;
